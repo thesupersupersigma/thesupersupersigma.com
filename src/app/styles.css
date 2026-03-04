@@ -1,0 +1,28 @@
+body {
+    text-align: center;
+}
+
+[name="title"] {
+    font-family: cursive ;
+}
+
+#credit {
+    position: fixed;
+    bottom: 0;
+    right: 10px;
+}
+
+.pages li{
+    list-style-type: none;
+    padding-left: 0;
+    display: inline-block;
+}
+
+.pages li:not(:last-child) a::after {
+    display: inline-block;
+    color: black;
+    content: "|";
+    font-size: 80%;
+    font-weight: bold;
+    padding: 0 3px;
+}

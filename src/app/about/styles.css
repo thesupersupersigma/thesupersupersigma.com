@@ -1,0 +1,29 @@
+body {
+    text-align: center;
+}
+
+nav {
+    border-bottom: 1px solid black;
+}
+
+.topbar ol {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.topbar {
+    display: inline-block;
+}
+
+.topbar a::after {
+    display: inline-block;
+    color: black;
+    content: "->";
+    font-size: 80%;
+    font-weight: bold;
+    padding: 0 3px;
+}
+
+#contact {
+    list-style-type: none;
+}
