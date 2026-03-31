@@ -26,3 +26,12 @@ body {
     font-weight: bold;
     padding: 0 3px;
 }
+
+.lsofcourses {
+  display: inline-block;
+  text-align: left;
+}
+
+#startdate {
+    text-align: center;
+}

@@ -13,6 +13,7 @@ nav {
 
 .topbar {
     display: inline-block;
+    position: absolute;
 }
 
 .topbar a::after {
@@ -22,4 +23,21 @@ nav {
     font-size: 80%;
     font-weight: bold;
     padding: 0 3px;
+}
+
+.legend h5 {
+    display: inline-block;
+    width: auto;
+}
+
+.green {
+    color: green;
+}
+
+.yellow {
+    color: rgb(255, 217, 0);
+}
+
+.purple {
+    color: purple;
 }
