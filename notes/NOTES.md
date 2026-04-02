@@ -14,3 +14,9 @@ NAME    [name="NAME"]
 <img> requires src which can be something from an external source or from public
 
 ID's in css cant start with a digit, if it does you ened to do [id="1"]
+
+add alts/descriptions for images and stuff like that, ex:
+
+<img src="#" alt="A field of yellow sunflowers" /> (from codeacademy, the # would prob be a link to an img of sunflowers)
+
+When doing videos add controls attribute for basic video controls, unless not required
