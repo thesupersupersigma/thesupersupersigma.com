@@ -1,6 +1,6 @@
 ## Notes for other ppl reading ##
 
-Theres nothing much for me to put here
+Theres nothing much for me to put here but u can look at the notes/refrences that i use
 
 ## Notes for me ##
 
@@ -27,4 +27,41 @@ You can do target="_blank" in an <a> tag to make it open in a new window
 
 you can make auto scroll things by linking a <a> to  an id like this (example id being used it intro) <p><a href="#intro">Intro</a><p>
 
-<!-- This is a comment that the browser will not display. --> for html
+<!-- This is a comment that the browser will not display. --> for html  <!-- -->
+
+### Table Setup ###
+<table>
+  <thead>                        <!-- groups header rows -->
+    <tr>
+      <th scope="col">Label</th> <!-- column header -->
+      <th scope="col">Label</th>
+      <th scope="col">Label</th>
+    </tr>
+  </thead>
+
+  <tbody>                        <!-- groups main data rows -->
+    <tr>
+      <th scope="row">Label</th> <!-- row header (optional) -->
+      <td>data</td>
+      <td>data</td>
+    </tr>
+    <tr>
+      <th scope="row">Label</th>
+      <td>data</td>
+      <td>data</td>
+    </tr>
+  </tbody>
+
+  <tfoot>                        <!-- groups summary/total rows -->
+    <tr>
+      <th scope="row">Total</th>
+      <td>data</td>
+      <td>data</td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- extras -->
+<!-- colspan="2" — stretch a cell across 2 columns -->
+<!-- rowspan="2" — stretch a cell down 2 rows      -->
+<!-- margin: 0 auto — center the table in CSS       -->
