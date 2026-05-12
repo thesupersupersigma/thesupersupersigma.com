@@ -2,16 +2,23 @@ body {
     text-align: center;
 }
 
-.pages li{
+nav {
+    border-bottom: 1px solid black;
+}
+
+.topbar ol {
     list-style-type: none;
     padding-left: 0;
+}
+
+.topbar {
     display: inline-block;
 }
 
-.pages li:not(:last-child) a::after {
+.topbar a::after {
     display: inline-block;
     color: black;
-    content: "|";
+    content: "->";
     font-size: 80%;
     font-weight: bold;
     padding: 0 3px;
