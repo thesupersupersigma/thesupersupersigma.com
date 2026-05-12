@@ -1,0 +1,25 @@
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# Spotlight & Trash
+.Spotlight-V100
+.Trashes
+
+# Editor & IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local Server/Build Artifacts
+node_modules/
+dist/
+build/
