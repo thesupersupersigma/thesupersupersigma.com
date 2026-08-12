@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M-1 Capability Probe</title>
+<style>
+  :root{
+    --bg:#17181c;
+    --panel:#1f2126;
+    --panel-2:#252830;
+    --line:#32363f;
+    --text:#d6d8db;
+    --dim:#7c8189;
+    --pass:#5ac36a;
+    --fail:#e0574a;
+    --warn:#e3c04a;
+    --info:#4fbfd4;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    line-height:1.55;
+    padding:20px 16px 96px;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:860px;margin:0 auto}
+
+  header{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:24px}
+  h1{
+    font-size:15px;font-weight:700;margin:0 0 6px;
+    letter-spacing:.22em;text-transform:uppercase;
+  }
+  .sub{color:var(--dim);font-size:12px;margin:0}
+  .sub b{color:var(--text);font-weight:400}
+
+  section{margin-bottom:26px}
+  h2{
+    font-size:12px;font-weight:700;margin:0 0 10px;
+    letter-spacing:.14em;text-transform:uppercase;
+    display:flex;align-items:baseline;gap:10px;
+  }
+  h2 .n{color:var(--dim);font-weight:400}
+  h2 .verdict{margin-left:auto;font-weight:400;letter-spacing:.06em;font-size:11px}
+
+  .rows{background:var(--panel);border:1px solid var(--line)}
+  .row{display:flex;gap:12px;padding:5px 10px;border-bottom:1px solid #24272e}
+  .row:last-child{border-bottom:0}
+  .row .k{color:var(--dim);flex:0 0 44%;word-break:break-word}
+  .row .v{flex:1;word-break:break-word}
+  @media (max-width:520px){
+    .row{flex-direction:column;gap:0}
+    .row .k{flex:none}
+  }
+
+  .pass{color:var(--pass)}
+  .fail{color:var(--fail)}
+  .warn{color:var(--warn)}
+  .info{color:var(--info)}
+  .dim{color:var(--dim)}
+
+  .note{
+    border-left:2px solid var(--line);
+    padding:6px 0 6px 12px;margin:10px 0 0;
+    color:var(--dim);font-size:12px;
+  }
+  .note.alert{border-left-color:var(--warn);color:var(--warn)}
+  .note.bad{border-left-color:var(--fail);color:var(--fail)}
+
+  /* signature: the key grid */
+  .keygrid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .key{
+    min-width:44px;padding:8px 9px;text-align:center;
+    background:var(--panel-2);
+    color:var(--dim);
+    border:1px solid var(--line);
+    box-shadow:3px 3px 0 #101116;
+    font-size:12px;
+    user-select:none;
+  }
+  .key.got{
+    background:#20422a;border-color:var(--pass);color:var(--pass);
+    box-shadow:3px 3px 0 #0f1a12;
+  }
+  .key.flash{background:#2c5c39}
+  @media (prefers-reduced-motion:no-preference){
+    .key{transition:background .12s linear,color .12s linear}
+  }
+
+  #keylog{
+    background:#131418;border:1px solid var(--line);
+    padding:8px 10px;height:130px;overflow:auto;
+    font-size:11.5px;color:var(--dim);white-space:pre;
+  }
+
+  #lockpad{
+    background:var(--panel-2);border:1px solid var(--line);
+    padding:26px 14px;text-align:center;cursor:pointer;
+    color:var(--dim);
+  }
+  #lockpad:focus-visible,button:focus-visible,input:focus-visible{
+    outline:2px solid var(--info);outline-offset:2px;
+  }
+  #lockpad.locked{border-color:var(--pass);color:var(--pass)}
+
+  input[type=text]{
+    background:#131418;border:1px solid var(--line);color:var(--text);
+    font-family:var(--mono);font-size:12px;padding:6px 8px;width:100%;
+  }
+  .field{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .field input{flex:1;min-width:200px}
+
+  button{
+    background:var(--panel-2);color:var(--text);
+    border:1px solid var(--line);box-shadow:3px 3px 0 #101116;
+    font-family:var(--mono);font-size:12px;padding:7px 13px;cursor:pointer;
+    letter-spacing:.04em;
+  }
+  button:active{box-shadow:1px 1px 0 #101116;transform:translate(2px,2px)}
+  button.danger{border-color:#5c332f;color:var(--fail)}
+
+  canvas{display:block;width:120px;height:80px;border:1px solid var(--line)}
+
+  footer{
+    position:fixed;left:0;right:0;bottom:0;
+    background:#101116;border-top:1px solid var(--line);
+    padding:12px 16px;
+  }
+  footer .wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  footer .status{color:var(--dim);font-size:12px}
+  #report{
+    position:absolute;left:-9999px;width:1px;height:1px;opacity:0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>M-1 Capability Probe</h1>
+  <p class="sub">Run this on the Chromebook you want to play on. Nothing installs. Press every key in
+  section 04, then <b>Copy report</b> at the bottom and paste it back.</p>
+</header>
+
+<section id="s-env">
+  <h2><span class="n">01</span> Device &amp; runtime <span class="verdict" id="v-env"></span></h2>
+  <div class="rows" id="r-env"></div>
+  <p class="note" id="n-env" hidden></p>
+</section>
+
+<section id="s-gl">
+  <h2><span class="n">02</span> WebGL2 &amp; GPU <span class="verdict" id="v-gl"></span></h2>
+  <div class="rows" id="r-gl"></div>
+  <p class="note" id="n-gl" hidden></p>
+  <div style="margin-top:10px"><canvas id="gl-canvas" width="240" height="160"></canvas></div>
+</section>
+
+<section id="s-store">
+  <h2><span class="n">03</span> Storage &amp; persistence <span class="verdict" id="v-store"></span></h2>
+  <div class="rows" id="r-store"></div>
+  <p class="note" id="n-store" hidden></p>
+  <p class="note">Close the browser completely, reopen this page, and check
+  <span class="dim">"survived restart"</span>. That is the "clear site data on exit" test.</p>
+</section>
+
+<section id="s-net">
+  <h2><span class="n">04</span> Network reachability <span class="verdict" id="v-net"></span></h2>
+  <div class="field">
+    <input type="text" id="wss-url" value="wss://echo.websocket.events" aria-label="WebSocket URL to test">
+    <button id="wss-go">Test WebSocket</button>
+  </div>
+  <div class="rows" id="r-net"></div>
+  <p class="note">The default is a public echo service and may be down for its own reasons — a failure
+  here is not proof the school blocks WebSockets. Retest later against your own host to be sure.</p>
+</section>
+
+<section id="s-keys">
+  <h2><span class="n">05</span> Keys ChromeOS lets through <span class="verdict" id="v-keys"></span></h2>
+  <p class="sub" style="margin-bottom:10px">Click here first, then press each key once. Grey means it never
+  reached the page — that key is unusable as a Minecraft bind.</p>
+  <div class="keygrid" id="keygrid"></div>
+  <div id="keylog">waiting for keys…</div>
+</section>
+
+<section id="s-lock">
+  <h2><span class="n">06</span> Pointer lock <span class="verdict" id="v-lock"></span></h2>
+  <div id="lockpad" tabindex="0" role="button">Click to capture the mouse</div>
+  <div class="rows" id="r-lock" style="margin-top:10px"></div>
+</section>
+
+<section id="s-heap">
+  <h2><span class="n">07</span> Heap ceiling <span class="verdict" id="v-heap"></span></h2>
+  <div class="rows" id="r-heap"></div>
+  <p class="note alert">The stress test allocates memory until the tab dies. <b>Copy your report
+  first.</b> Only useful if section 07 reports no heap limit.</p>
+  <button id="stress" class="danger">Allocate until failure</button>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <button id="copy">Copy report</button>
+    <span class="status" id="copy-status">Report updates as checks finish.</span>
+  </div>
+</footer>
+<textarea id="report" readonly aria-hidden="true"></textarea>
+
+<script>
+"use strict";
+
+const R = {};                 // collected results, flat key -> value
+const out = (k, v) => { R[k] = v; };
+
+function addRow(host, k, v, cls) {
+  const row = document.createElement("div");
+  row.className = "row";
+  const kk = document.createElement("span"); kk.className = "k"; kk.textContent = k;
+  const vv = document.createElement("span"); vv.className = "v" + (cls ? " " + cls : "");
+  vv.textContent = String(v);
+  row.append(kk, vv);
+  document.getElementById(host).append(row);
+  out(k, v);
+}
+function verdict(id, text, cls) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = "verdict " + cls;
+}
+function note(id, text, cls) {
+  const el = document.getElementById(id);
+  el.hidden = false; el.textContent = text;
+  el.className = "note" + (cls ? " " + cls : "");
+}
+
+/* ---------- 01 device & runtime ---------- */
+(function env() {
+  const ua = navigator.userAgent;
+  const m = ua.match(/Chrom(e|ium)\/(\d+)/);
+  const chromeMajor = m ? parseInt(m[2], 10) : null;
+
+  addRow("r-env", "user agent", ua);
+  addRow("r-env", "platform", navigator.platform || "(unknown)");
+  addRow("r-env", "chromeos", /CrOS/.test(ua) ? "yes" : "no — not the target device",
+         /CrOS/.test(ua) ? "pass" : "warn");
+  addRow("r-env", "logical cores", navigator.hardwareConcurrency || "(unknown)");
+  addRow("r-env", "device memory (GB, coarse)", navigator.deviceMemory || "(not reported)");
+  addRow("r-env", "screen", screen.width + "x" + screen.height + " @ dpr " + window.devicePixelRatio);
+  addRow("r-env", "protocol", location.protocol);
+  addRow("r-env", "WebAssembly", typeof WebAssembly === "object" ? "yes" : "no",
+         typeof WebAssembly === "object" ? "pass" : "fail");
+  addRow("r-env", "chrome major", chromeMajor === null ? "(unparsed)" : chromeMajor);
+  addRow("r-env", "wasm-gc likely (chrome >= 119)",
+         chromeMajor === null ? "unknown" : (chromeMajor >= 119 ? "yes" : "no"),
+         chromeMajor >= 119 ? "pass" : "warn");
+  addRow("r-env", "SharedArrayBuffer", typeof SharedArrayBuffer !== "undefined" ? "yes" : "no");
+  addRow("r-env", "crossOriginIsolated", String(!!window.crossOriginIsolated));
+  addRow("r-env", "OffscreenCanvas", typeof OffscreenCanvas !== "undefined" ? "yes" : "no");
+
+  if (location.protocol === "file:") {
+    note("n-env", "Opened from file:// — IndexedDB and some APIs are blocked here. " +
+                  "Host this page over http/https for section 03 to mean anything.", "bad");
+  }
+  verdict("v-env", /CrOS/.test(ua) ? "on target" : "wrong device",
+          /CrOS/.test(ua) ? "pass" : "warn");
+})();
+
+/* ---------- 02 webgl2 ---------- */
+(function webgl() {
+  const canvas = document.getElementById("gl-canvas");
+  let gl = null;
+  try { gl = canvas.getContext("webgl2", { antialias: false }); } catch (e) {}
+
+  if (!gl) {
+    addRow("r-gl", "webgl2 context", "FAILED TO CREATE", "fail");
+    verdict("v-gl", "blocked", "fail");
+    note("n-gl", "No WebGL2. Either hardware acceleration is off or policy blocks it. " +
+                 "The port cannot work at all in this state — check chrome://gpu.", "bad");
+    return;
+  }
+  addRow("r-gl", "webgl2 context", "created", "pass");
+
+  const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+  const vendor = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+  const renderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+  const software = /swiftshader|software|llvmpipe|basic render/i.test(String(renderer));
+
+  addRow("r-gl", "gpu vendor", vendor);
+  addRow("r-gl", "gpu renderer", renderer, software ? "fail" : "pass");
+  addRow("r-gl", "software rasterizer", software ? "YES — no real GPU" : "no",
+         software ? "fail" : "pass");
+  addRow("r-gl", "glsl version", gl.getParameter(gl.SHADING_LANGUAGE_VERSION));
+
+  const P = [
+    ["MAX_TEXTURE_SIZE", gl.MAX_TEXTURE_SIZE],
+    ["MAX_3D_TEXTURE_SIZE", gl.MAX_3D_TEXTURE_SIZE],
+    ["MAX_ARRAY_TEXTURE_LAYERS", gl.MAX_ARRAY_TEXTURE_LAYERS],
+    ["MAX_TEXTURE_IMAGE_UNITS", gl.MAX_TEXTURE_IMAGE_UNITS],
+    ["MAX_COMBINED_TEXTURE_IMAGE_UNITS", gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS],
+    ["MAX_VERTEX_ATTRIBS", gl.MAX_VERTEX_ATTRIBS],
+    ["MAX_UNIFORM_BUFFER_BINDINGS", gl.MAX_UNIFORM_BUFFER_BINDINGS],
+    ["MAX_VERTEX_UNIFORM_BLOCKS", gl.MAX_VERTEX_UNIFORM_BLOCKS],
+    ["MAX_FRAGMENT_UNIFORM_BLOCKS", gl.MAX_FRAGMENT_UNIFORM_BLOCKS],
+    ["MAX_DRAW_BUFFERS", gl.MAX_DRAW_BUFFERS],
+    ["MAX_SAMPLES", gl.MAX_SAMPLES],
+    ["MAX_RENDERBUFFER_SIZE", gl.MAX_RENDERBUFFER_SIZE],
+    ["MAX_ELEMENTS_INDICES", gl.MAX_ELEMENTS_INDICES],
+    ["MAX_ELEMENTS_VERTICES", gl.MAX_ELEMENTS_VERTICES],
+  ];
+  for (const [name, e] of P) {
+    let val;
+    try { val = gl.getParameter(e); } catch (err) { val = "(error)"; }
+    addRow("r-gl", name, val);
+  }
+
+  const exts = (gl.getSupportedExtensions() || []).slice().sort();
+  addRow("r-gl", "extension count", exts.length);
+  const wanted = [
+    "EXT_texture_filter_anisotropic",
+    "WEBGL_compressed_texture_s3tc",
+    "EXT_color_buffer_float",
+    "OES_texture_float_linear",
+    "WEBGL_lose_context",
+    "KHR_parallel_shader_compile",
+  ];
+  for (const w of wanted) {
+    const has = exts.indexOf(w) !== -1;
+    addRow("r-gl", "ext " + w, has ? "yes" : "no", has ? "pass" : "dim");
+  }
+  out("all extensions", exts.join(" "));
+
+  // functional test: actually draw and read a pixel back
+  let drew = "not attempted";
+  try {
+    const vsrc = "#version 300 es\nin vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}";
+    const fsrc = "#version 300 es\nprecision mediump float;out vec4 c;void main(){c=vec4(0.35,0.76,0.41,1.0);}";
+    const mk = (type, src) => {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+      return s;
+    };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, mk(gl.VERTEX_SHADER, vsrc));
+    gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, fsrc));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    gl.useProgram(prog);
+
+    const vao = gl.createVertexArray();
+    gl.bindVertexArray(vao);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.09, 0.09, 0.11, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    const px = new Uint8Array(4);
+    gl.readPixels(canvas.width >> 1, canvas.height >> 1, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    drew = (px[1] > 120) ? "yes — pixel read back correctly"
+                         : "context ok but pixel wrong: " + Array.from(px).join(",");
+
+    // crude frame-rate sample over ~800ms of trivial draws
+    let frames = 0;
+    const t0 = performance.now();
+    (function spin() {
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      frames++;
+      if (performance.now() - t0 < 800) requestAnimationFrame(spin);
+      else {
+        const fps = Math.round(frames / ((performance.now() - t0) / 1000));
+        addRow("r-gl", "idle rAF fps (trivial draw)", fps, fps >= 55 ? "pass" : "warn");
+        buildReport();
+      }
+    })();
+  } catch (e) {
+    drew = "ERROR: " + e.message;
+  }
+  addRow("r-gl", "draw + readPixels", drew, /^yes/.test(drew) ? "pass" : "fail");
+
+  if (software) {
+    verdict("v-gl", "software only", "fail");
+    note("n-gl", "This is a software rasterizer, not a GPU. 30fps is not reachable here no matter " +
+                 "what the port does. Check chrome://gpu and whether policy disables acceleration.", "bad");
+  } else {
+    const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+    verdict("v-gl", "ok", "pass");
+    if (maxTex < 4096) {
+      note("n-gl", "MAX_TEXTURE_SIZE is " + maxTex + ". Minecraft's stitched atlas wants room to grow — " +
+                   "under 4096 expect atlas trouble at higher resource-pack sizes.", "alert");
+    }
+  }
+})();
+
+/* ---------- 03 storage ---------- */
+(async function storage() {
+  addRow("r-store", "localStorage", (function(){
+    try { localStorage.setItem("_p","1"); localStorage.removeItem("_p"); return "usable"; }
+    catch(e){ return "blocked: " + e.name; }
+  })());
+
+  if (navigator.storage && navigator.storage.estimate) {
+    try {
+      const est = await navigator.storage.estimate();
+      const gb = n => (n / 1073741824).toFixed(2) + " GB";
+      addRow("r-store", "quota granted", gb(est.quota) + " (" + est.quota + " bytes)");
+      addRow("r-store", "already used", gb(est.usage || 0));
+      if (est.quota < 2 * 1073741824) {
+        note("n-store", "Quota under 2GB. Worlds plus cached assets have to fit inside this.", "alert");
+      }
+    } catch (e) { addRow("r-store", "quota", "error: " + e.message, "warn"); }
+  } else {
+    addRow("r-store", "quota", "StorageManager unavailable", "warn");
+  }
+
+  if (navigator.storage && navigator.storage.persisted) {
+    try {
+      let p = await navigator.storage.persisted();
+      addRow("r-store", "persistent storage (before ask)", String(p));
+      if (!p && navigator.storage.persist) {
+        p = await navigator.storage.persist();
+        addRow("r-store", "persistent storage (after ask)", String(p), p ? "pass" : "warn");
+      }
+    } catch (e) { addRow("r-store", "persistence", "error: " + e.message, "warn"); }
+  }
+
+  // IndexedDB round trip + survival across restarts
+  try {
+    const db = await new Promise((res, rej) => {
+      const rq = indexedDB.open("mcprobe", 1);
+      rq.onupgradeneeded = () => rq.result.createObjectStore("kv");
+      rq.onsuccess = () => res(rq.result);
+      rq.onerror = () => rej(rq.error);
+    });
+    const get = () => new Promise((res, rej) => {
+      const r = db.transaction("kv", "readonly").objectStore("kv").get("marker");
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+    });
+    const put = v => new Promise((res, rej) => {
+      const r = db.transaction("kv", "readwrite").objectStore("kv").put(v, "marker");
+      r.onsuccess = () => res(); r.onerror = () => rej(r.error);
+    });
+
+    const prior = await get();
+    addRow("r-store", "indexeddb", "usable", "pass");
+    if (prior) {
+      const age = Math.round((Date.now() - prior.lastSeen) / 1000);
+      addRow("r-store", "survived restart", "YES — marker from " + age + "s ago", "pass");
+      addRow("r-store", "runs recorded", prior.runs + 1);
+      await put({ firstSeen: prior.firstSeen, lastSeen: Date.now(), runs: prior.runs + 1 });
+      verdict("v-store", "persists", "pass");
+    } else {
+      addRow("r-store", "survived restart", "first run — no marker yet. Restart the browser and reload.", "warn");
+      await put({ firstSeen: Date.now(), lastSeen: Date.now(), runs: 1 });
+      verdict("v-store", "first run", "warn");
+    }
+  } catch (e) {
+    addRow("r-store", "indexeddb", "FAILED: " + e.name + " " + e.message, "fail");
+    verdict("v-store", "blocked", "fail");
+    note("n-store", "No IndexedDB means no world saving in the browser. If this is file://, host the " +
+                    "page instead. If it is policy, zip export becomes the only way to keep a world.", "bad");
+  }
+  buildReport();
+})();
+
+/* ---------- 04 network ---------- */
+(function net() {
+  const btn = document.getElementById("wss-go");
+  const input = document.getElementById("wss-url");
+
+  function testWs(url) {
+    addRow("r-net", "wss attempt", url);
+    const t0 = performance.now();
+    let settled = false;
+    let ws;
+    const done = (label, cls) => {
+      if (settled) return; settled = true;
+      addRow("r-net", "wss result", label + " after " + Math.round(performance.now() - t0) + "ms", cls);
+      verdict("v-net", cls === "pass" ? "reachable" : "blocked", cls);
+      buildReport();
+      try { ws && ws.close(); } catch (e) {}
+    };
+    try { ws = new WebSocket(url); }
+    catch (e) { return done("constructor threw: " + e.message, "fail"); }
+    ws.onopen = () => { try { ws.send("probe"); } catch(e){} done("OPEN", "pass"); };
+    ws.onerror = () => done("ERROR (blocked, down, or bad url)", "fail");
+    ws.onclose = ev => done("CLOSED code " + ev.code, "fail");
+    setTimeout(() => done("TIMEOUT (10s)", "fail"), 10000);
+  }
+
+  btn.addEventListener("click", () => testWs(input.value.trim()));
+
+  // plain https reachability, to tell "network blocked" apart from "websockets blocked"
+  const host = "https://thesupersupersigma.com/";
+  const t0 = performance.now();
+  fetch(host, { mode: "no-cors", cache: "no-store" })
+    .then(() => addRow("r-net", "https to own domain",
+            "reachable in " + Math.round(performance.now() - t0) + "ms", "pass"))
+    .catch(e => addRow("r-net", "https to own domain", "failed: " + e.message, "fail"))
+    .finally(buildReport);
+
+  testWs(input.value.trim());
+})();
+
+/* ---------- 05 keys (signature) ---------- */
+(function keys() {
+  const TRACK = [
+    ["KeyW","W"],["KeyA","A"],["KeyS","S"],["KeyD","D"],
+    ["Space","Space"],["ShiftLeft","Shift"],["ControlLeft","Ctrl"],["AltLeft","Alt"],
+    ["KeyE","E"],["KeyQ","Q"],["KeyF","F"],["KeyT","T"],
+    ["Tab","Tab"],["Escape","Esc"],
+    ["Digit1","1"],["Digit2","2"],["Digit3","3"],["Digit9","9"],
+    ["F1","F1"],["F3","F3"],["F5","F5"],["F11","F11"],
+  ];
+  const cells = {};
+  const grid = document.getElementById("keygrid");
+  for (const [code, label] of TRACK) {
+    const d = document.createElement("div");
+    d.className = "key"; d.textContent = label; d.dataset.code = code;
+    grid.append(d); cells[code] = d;
+  }
+
+  const log = document.getElementById("keylog");
+  const lines = [];
+  const got = new Set();
+
+  window.addEventListener("keydown", ev => {
+    lines.unshift(
+      "code=" + ev.code.padEnd(14) +
+      " key=" + String(ev.key).padEnd(10) +
+      " which=" + String(ev.keyCode).padEnd(4) +
+      (ev.repeat ? " (repeat)" : "")
+    );
+    if (lines.length > 40) lines.pop();
+    log.textContent = lines.join("\n");
+
+    const cell = cells[ev.code];
+    if (cell) {
+      got.add(ev.code);
+      cell.classList.add("got", "flash");
+      setTimeout(() => cell.classList.remove("flash"), 130);
+      // don't fight Escape - the browser owns it and will win
+      if (ev.code !== "Escape") ev.preventDefault();
+    }
+    const missing = TRACK.filter(k => !got.has(k[0]));
+    verdict("v-keys", got.size + "/" + TRACK.length + " captured",
+            missing.length === 0 ? "pass" : "warn");
+    out("keys captured", TRACK.filter(k => got.has(k[0])).map(k => k[1]).join(" "));
+    out("keys NEVER captured", missing.map(k => k[1]).join(" ") || "(none)");
+  }, true);
+
+  verdict("v-keys", "0/" + TRACK.length + " captured", "warn");
+  out("keys captured", "(none pressed)");
+  out("keys NEVER captured", TRACK.map(k => k[1]).join(" "));
+})();
+
+/* ---------- 06 pointer lock ---------- */
+(function lock() {
+  const pad = document.getElementById("lockpad");
+  let moves = 0, maxDelta = 0, everLocked = false;
+
+  const onMove = ev => {
+    moves++;
+    maxDelta = Math.max(maxDelta, Math.abs(ev.movementX || 0), Math.abs(ev.movementY || 0));
+  };
+
+  const request = () => {
+    if (!pad.requestPointerLock) {
+      addRow("r-lock", "pointer lock api", "not available", "fail");
+      verdict("v-lock", "unavailable", "fail");
+      return;
+    }
+    try { pad.requestPointerLock(); } catch (e) {
+      addRow("r-lock", "request threw", e.message, "fail");
+    }
+  };
+  pad.addEventListener("click", request);
+  pad.addEventListener("keydown", ev => { if (ev.code === "Enter" || ev.code === "Space") request(); });
+
+  document.addEventListener("pointerlockchange", () => {
+    const locked = document.pointerLockElement === pad;
+    pad.classList.toggle("locked", locked);
+    if (locked) {
+      everLocked = true;
+      pad.textContent = "Captured. Move the mouse, then press Esc.";
+      document.addEventListener("mousemove", onMove);
+      addRow("r-lock", "acquired", "yes", "pass");
+      verdict("v-lock", "works", "pass");
+    } else {
+      document.removeEventListener("mousemove", onMove);
+      pad.textContent = everLocked
+        ? "Released. Click to capture again."
+        : "Click to capture the mouse";
+      if (everLocked) {
+        addRow("r-lock", "movement events", moves);
+        addRow("r-lock", "largest delta seen", maxDelta,
+               maxDelta > 0 ? "pass" : "fail");
+        addRow("r-lock", "released by Esc", "yes — expected, cannot be prevented", "info");
+        buildReport();
+      }
+    }
+  });
+
+  document.addEventListener("pointerlockerror", () => {
+    addRow("r-lock", "pointer lock", "ERROR acquiring", "fail");
+    verdict("v-lock", "failed", "fail");
+  });
+
+  verdict("v-lock", "not tested", "dim");
+})();
+
+/* ---------- 07 heap ---------- */
+(function heap() {
+  const pm = performance.memory;
+  if (pm) {
+    const mb = n => Math.round(n / 1048576) + " MB";
+    addRow("r-heap", "jsHeapSizeLimit", mb(pm.jsHeapSizeLimit), "info");
+    addRow("r-heap", "totalJSHeapSize", mb(pm.totalJSHeapSize));
+    addRow("r-heap", "usedJSHeapSize", mb(pm.usedJSHeapSize));
+    verdict("v-heap", mb(pm.jsHeapSizeLimit) + " ceiling", "info");
+  } else {
+    addRow("r-heap", "performance.memory", "not exposed", "warn");
+    verdict("v-heap", "unknown", "warn");
+  }
+
+  document.getElementById("stress").addEventListener("click", function () {
+    this.disabled = true;
+    this.textContent = "allocating…";
+    const blocks = [];
+    let mb = 0;
+    const step = () => {
+      try {
+        for (let i = 0; i < 8; i++) { blocks.push(new Uint8Array(1048576).fill(1)); mb++; }
+      } catch (e) {
+        addRow("r-heap", "allocation died at", mb + " MB (" + e.name + ")", "info");
+        buildReport();
+        return;
+      }
+      addRow("r-heap", "allocated so far", mb + " MB");
+      setTimeout(step, 0);
+    };
+    step();
+  });
+})();
+
+/* ---------- report ---------- */
+function buildReport() {
+  const lines = [
+    "M-1 CAPABILITY PROBE",
+    "generated " + new Date().toISOString(),
+    "page " + location.href,
+    "",
+  ];
+  for (const k of Object.keys(R)) lines.push(k + ": " + R[k]);
+  document.getElementById("report").value = lines.join("\n");
+}
+buildReport();
+
+document.getElementById("copy").addEventListener("click", async () => {
+  buildReport();
+  const ta = document.getElementById("report");
+  const status = document.getElementById("copy-status");
+  const text = ta.value;
+  try {
+    await navigator.clipboard.writeText(text);
+    status.textContent = "Copied " + text.split("\n").length + " lines.";
+    status.className = "status pass";
+  } catch (e) {
+    ta.style.cssText = "position:static;width:100%;height:200px;opacity:1;margin-top:8px";
+    ta.select();
+    status.textContent = "Clipboard blocked — text is selected below, copy it manually.";
+    status.className = "status warn";
+  }
+});
+</script>
+</body>
+</html>
