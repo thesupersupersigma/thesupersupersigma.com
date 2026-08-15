@@ -1,11 +1,9 @@
 # Remember to add vercel analytics to each page #
 
-## to push to dev ##
-```
-git push origin HEAD:dev
-```
+Just realised that this readme is ass so ill fix it later
 
-git push origin --delete <typo branch name>
+### goto the site: [thesupersupersigma.com](https://thesupersupersigma.com)
 
-add alts/descriptions for images and stuff like that, ex:
-<img src="#" alt="A field of yellow sunflowers" /> (from codeacademy, the # would prob be a link to an img of sunflowers)
+## TODO
+
+- Make pages for every tile

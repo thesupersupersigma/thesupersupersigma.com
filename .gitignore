@@ -23,3 +23,6 @@ Icon?
 node_modules/
 dist/
 build/
+
+# My files
+ignored/
