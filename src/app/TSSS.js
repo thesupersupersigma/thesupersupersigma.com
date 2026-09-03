@@ -11,6 +11,9 @@ ooooooooooooo  .oooooo..o  .oooooo..o  .oooooo..o
 `, "font-family: Menlo, monospace; white-space: pre;"); // Quite possible the hardest thing ive ever done fuck you
 
 
+console.log("source code available at https://github.com/thesupersupersigma/thesupersupersigma.com");
+console.log("also check out my github profile at https://github.com/thesupersupersigma");
+
 
 /*
 
