@@ -1,6 +1,6 @@
 ## Notes for other ppl reading ##
 
-Theres nothing much for me to put here but u can look at the notes/refrences that i use
+Theres nothing much for me to put here but u can look at the notes/refrences that i use (i dont think ive ever touched ts btw)
 
 ## Notes for me ##
 
