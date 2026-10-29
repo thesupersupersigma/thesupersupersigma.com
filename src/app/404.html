@@ -2,69 +2,163 @@
 <html>
     <head>
         <title>404</title>
-        <link rel="icon" href="public/favicon.ico">
         <style>
+            @font-face {
+                font-family: Syne;
+                src: url(./public/Syne-2/static/Syne-Regular.ttf);
+            }
+
+            @font-face {
+                font-family: Syne-Bold;
+                src: url(./public/Syne-2/static/Syne-Bold.ttf);
+            }
+            :root {
+                --u: min(calc(100vh / 950), calc(100vw / 780));
+            }
+            html,
             body {
-                text-align: center;
-                font-family: Arial, sans-serif;
-                background-color: red;
+                margin: 0;
+                padding: 0;
             }
-
-            h1 {
-                margin-top: 0;
-                background-color: darkred;
-                border-radius: 0 0 7px 7px;
-                width: fit-content;
-                margin: 0 auto;
-                padding: 3px 7px;
-            }
-            
-            h3 {
-                font-weight: normal;
-                background-color: darkred;
-                border-radius: 7px;
-                width : fit-content;
-                margin: 7px auto;
-                padding: 3px 7px;
-            }
-
-            .screen {
-                border-radius: 7px;
+            body {
+                background-color: rgb(14, 14, 14);          /* the wall */
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                align-items: center;
+                height: 100vh;
                 overflow: hidden;
             }
 
+            /* ---------- Message ---------- */
+            .message {
+                height: calc(120 * var(--u));
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                color: whitesmoke;
+                font-family: Syne-Bold;
+            }
+            .message h1 {
+                margin: 0;
+                font-size: calc(56 * var(--u));
+                line-height: 1.1;
+            }
+            .message p {
+                margin: calc(6 * var(--u)) 0 0;
+                font-size: calc(24 * var(--u));
+            }
+
+            .tvWrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-top: calc(140 * var(--u));   /* room for the antennas */
+            }
+
+            /* ---------- Antennas ---------- */
+            .tvAntennaBase {
+                position: relative;
+                background-color: rgb(66, 36, 12);
+                width: calc(100 * var(--u));
+                height: calc(50 * var(--u));
+                border-radius: calc(50 * var(--u)) calc(50 * var(--u)) 0 0;
+            }
+            .rod {
+                position: absolute;
+                bottom: 100%;
+                left: calc(50% - 3 * var(--u));
+                width: calc(6 * var(--u));
+                height: calc(140 * var(--u));
+                background-color: rgb(170, 170, 170);
+                transform-origin: bottom center;
+            }
+            .rod.left  { transform: rotate(-30deg); }
+            .rod.right { transform: rotate(30deg); }
+            .rod::after {
+                content: "";
+                position: absolute;
+                top: calc(-6 * var(--u));
+                left: calc(-3 * var(--u));
+                width: calc(12 * var(--u));
+                height: calc(12 * var(--u));
+                border-radius: 50%;
+                background-color: rgb(210, 210, 210);
+            }
+
+            /* ---------- TV body ---------- */
             .tv {
-                width: 750px;
-                height: 550px;
-                display: block;
-                margin: 0 auto;
+                background-color: rgb(104, 59, 24);
+                width: calc(750 * var(--u));
+                height: calc(500 * var(--u));
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: 14px;
-                flex-direction: column;
+                border-radius: calc(50 * var(--u));
+            }
+            video {
+                width: 95%;
+                height: 92%;
+                border-radius: calc(50 * var(--u));
+                background-color: black;
             }
 
-            #brand {
-                padding: 3px 3px;
-                margin: 3px 0px;
-                border-radius: 3px;
-                background-color: grey;
-                border: 1px solid black;
+            /* ---------- Legs ---------- */
+            .legs {
+                display: flex;
+                justify-content: space-between;
+                width: calc(500 * var(--u));
+            }
+            .leg {
+                width: calc(40 * var(--u));
+                height: calc(60 * var(--u));
+                background-color: rgb(66, 36, 12);
+                clip-path: polygon(0 0, 100% 0, 80% 100%, 20% 100%);
+            }
+
+            /* ---------- Floor ---------- */
+            .floor {
+                width: 100%;
+                height: calc(80 * var(--u));
+                background-color: rgb(60, 40, 25);
+                border-top: calc(4 * var(--u)) solid rgb(40, 25, 15);
+                box-sizing: border-box;
+                position: relative;
+            }
+            .floor::before {                        /* soft shadow under the TV */
+                content: "";
+                position: absolute;
+                top: calc(-4 * var(--u));
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(560 * var(--u));
+                height: calc(14 * var(--u));
+                background: rgba(0, 0, 0, 0.35);
+                border-radius: 50%;
+                filter: blur(calc(6 * var(--u)));
             }
         </style>
-        <script src="./TSSS.js"></script>
     </head>
     <body>
-        <h1>404 Not Found</h1>
-        <h3>Check if you typed the URL correctly.</h3>
-
-        <div class="tv" title="this is supposed to be a tv dont judge how ass it is">
-            <video  alt="Rock With You Preformed by Michael Jackson at the 1980 Unicef Charity Gala" controls autoplay playsinline class="screen">
-                <source src="https://media.thesupersupersigma.com/RockWithYou-UnicefCharityGala1980.mp4" type="video/mp4">
-                <b>WAIT!</b> I pray the video loads, if it doesnt it prob measn my server is down which is bad, also fuck you safari
-            </video>
-            <p id="brand" title="Smansung makes good monitors">this is a tv</p>
+        <div class="message">
+            <h1>404 Wrong Page</h1>
+            <p>Double check your link</p>
         </div>
+        <div class="tvWrapper">
+            <div class="tvAntennaBase">
+                <div class="rod left"></div>
+                <div class="rod right"></div>
+            </div>
+            <div class="tv">
+                <video class="video" src="https://media.thesupersupersigma.com/RockWithYou-UnicefCharityGala1980.mp4" controls muted autoplay>Video is loading pls wait</video>
+            </div>
+            <div class="legs">
+                <div class="leg"></div>
+                <div class="leg"></div>
+            </div>
+        </div>
+        <div class="floor"></div>
     </body>
 </html>
