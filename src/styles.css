@@ -1,0 +1,48 @@
+@font-face {
+    font-family: Syne;
+    src: url(./public/Syne-2/static/Syne-Regular.ttf);
+}
+
+@font-face {
+    font-family: Syne-Bold;
+    src: url(./public/Syne-2/static/Syne-Bold.ttf);
+}
+
+body {
+    margin: 0 0;
+    padding: 0 0;
+}
+
+#credit {
+    position: fixed;
+    bottom: 0;
+    right: 14px;
+    z-index: 1000;
+}
+
+a {
+    color: whitesmoke;
+}
+
+a:hover {
+    color: white;
+}
+
+a:visited {
+    color: whitesmoke;
+}
+
+.windows7 {
+    background-image: url(./public/windows7BG.jpg);
+    height: 100vh;
+    width: 100%;
+    background-repeat: no-repeat;  
+    background-size: cover;        
+    background-position: center;
+    display: block;
+}
+
+.bottomBar {
+    width: 100%;
+    height: 14px;
+}
