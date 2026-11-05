@@ -1,0 +1,27 @@
+{
+  "name": "thesupersupersigma.com",
+  "version": "1.0.0",
+  "description": "thesupersupersigma's website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Pray theres no errors\" && exit 1",
+    "dev": "vite src",
+    "build": "vite build src",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thesupersupersigma/thesupersupersigma.com.git"
+  },
+  "keywords": [],
+  "author": "thesupersupersigma",
+  "license": "GPLv3",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/thesupersupersigma/thesupersupersigma.com/issues"
+  },
+  "homepage": "https://thesupersupersigma.com",
+  "devDependencies": {
+    "vite": "^8.3.6"
+  }
+}
