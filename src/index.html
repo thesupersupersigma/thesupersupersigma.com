@@ -15,14 +15,19 @@
     <script src="./TSSS.js" defer></script>
     <link rel="preload" href="./windows7BG.jpg" as="image" />
     <link rel="preload" href="/taskbar/taskbar.png" as="image" />
+    <script src="./script.js" defer></script>
 </head>
 <body>
     <div class="windows7">
-        <div class="bottomBar">
+        <div class="taskbar">
             <div class="buttons">
-                <button id="startMenu" onclick="alert('startMenu')"></button>
-                <button id="internetExplorer" onclick="alert('internetExplorer')"></button>
+                <button id="startMenuButton" onclick="alert('startMenu')"></button>
+                <button id="internetExplorerButton" onclick="alert('internetExplorer')"></button>
             </div>
+        </div>
+        <div id="startMenu">
+            <div class="appPanel"></div>
+            <div class="userPfpFrame"><img class="userPfp" src="/flower.png" alt="flower pfp"></div>
         </div>
     </div>
 </body>
