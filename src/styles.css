@@ -85,6 +85,8 @@ a:visited {
     position: fixed;
     bottom: 50px;
     width: 25vw;
+    min-width: 490px; /* 307px left side + room for the right column text */
+    font-family: "Segoe UI", Tahoma, sans-serif;
     height: 67vh;
     border-radius: 7px 7px 0px 0px;
     z-index: 1000;
@@ -127,11 +129,125 @@ a:visited {
     background-color: #fff;
     border: 1px solid rgba(40, 60, 80, 0.55);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+
+    /* app list on top, search strip pinned to the bottom */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
+/* ---------- App list (left panel) ---------- */
+
+.appList {
+    flex: 1;
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    overflow-y: auto;
+}
+
+.appItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 40px;
+    margin: 0 0 2px;
+    padding: 0 8px;
+    box-sizing: border-box;
+    background: none;
+    border: 1px solid transparent; /* keeps size the same when the hover border appears */
+    border-radius: 3px;
+    font: inherit;
+    font-size: 13px;
+    color: #1e1e1e;
+    text-align: left;
+    cursor: pointer;
+}
+
+/* Win7 light-blue hover highlight */
+.appItem:hover,
+.appItem:focus-visible {
+    outline: none;
+    background: linear-gradient(to bottom, rgba(232, 242, 254, 0.95), rgba(199, 223, 252, 0.95));
+    border-color: #7da2ce;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65);
+}
+
+.appItem:active {
+    background: linear-gradient(to bottom, rgba(199, 223, 252, 0.95), rgba(176, 207, 247, 0.95));
+}
+
+/* glossy colored circle icon, color comes from --c on each button */
+.appIcon {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 45%),
+      var(--c, #3498db);
+    box-shadow:
+      inset 0 -3px 6px rgba(0, 0, 0, 0.25),
+      0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.appName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---------- Search strip (bottom of left panel) ---------- */
+
 .startSearchBar {
+    flex: none;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
     background: linear-gradient(to bottom, #f1f5fa, #e1e9f2);
     border-top: 1px solid #d3dce8;
+}
+
+.searchBox {
+    position: relative;
+    width: 100%;
+}
+
+.searchBox input {
+    width: 100%;
+    height: 24px;
+    box-sizing: border-box;
+    padding: 0 26px 0 7px;
+    font: inherit;
+    font-size: 12px;
+    color: #1e1e1e;
+    background: #fff;
+    border: 1px solid #a5b6c8;
+    border-top-color: #8597ab;
+    border-radius: 2px;
+    outline: none;
+}
+
+.searchBox input::placeholder {
+    color: #6d6d6d;
+    font-style: italic;
+}
+
+.searchBox input:focus {
+    border-color: #5c93c9;
+}
+
+.searchIcon {
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    transform: translateY(-50%);
+    color: #2a5a8e;
+    pointer-events: none;
 }
 
 .userPfp {
@@ -161,4 +277,101 @@ a:visited {
       0 0 0 1px rgba(0, 0, 0, 0.55),
       inset 0 0 0 1px rgba(255, 255, 255, 0.4),
       0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Right glass column ---------- */
+
+.startRight {
+    position: absolute;
+    top: 52px;              /* just below the profile pic */
+    left: 315px;            /* 307px left side + 8px breathing room */
+    right: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rightItem,
+.rightItem:visited {
+    display: block;
+    padding: 7px 10px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.7), 0 1px 1px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+/* glassy hover box like Win7 */
+.rightItem:hover,
+.rightItem:focus-visible {
+    outline: none;
+    color: #fff;
+    background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.15) 100%);
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+      0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+/* thin etched divider between groups */
+.rightSep {
+    height: 1px;
+    margin: 4px 10px;
+    background: linear-gradient(to right,
+      transparent, rgba(255, 255, 255, 0.3) 20%, rgba(255, 255, 255, 0.3) 80%, transparent);
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Shut down button (no arrow) ---------- */
+
+.shutdownButton {
+    position: absolute;
+    left: 325px;
+    bottom: 17px;           /* lines up with the search box */
+    height: 24px;
+    padding: 0 16px;
+    font: inherit;
+    font-size: 12px;
+    color: #fff;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    border-radius: 3px;
+    background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0.15) 49%,
+      rgba(0, 0, 0, 0.12) 50%,
+      rgba(255, 255, 255, 0.08) 100%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+}
+
+.shutdownButton:hover,
+.shutdownButton:focus-visible {
+    outline: none;
+    background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(200, 230, 255, 0.3) 49%,
+      rgba(60, 140, 200, 0.35) 50%,
+      rgba(120, 200, 255, 0.45) 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+      0 0 8px rgba(120, 200, 255, 0.6);
+}
+
+.shutdownButton:active {
+    background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(60, 140, 200, 0.3) 100%);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }

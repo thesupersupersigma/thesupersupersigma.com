@@ -26,8 +26,52 @@
             </div>
         </div>
         <div id="startMenu">
-            <div class="appPanel"></div>
+            <!-- Left: white app panel -->
+            <div class="appPanel">
+                <ul class="appList">
+                    <!-- placeholder apps: change --c for the icon color -->
+                    <li><button class="appItem" style="--c: #e74c3c"><span class="appIcon"></span><span class="appName">App 1</span></button></li>
+                    <li><button class="appItem" style="--c: #e67e22"><span class="appIcon"></span><span class="appName">App 2</span></button></li>
+                    <li><button class="appItem" style="--c: #f1c40f"><span class="appIcon"></span><span class="appName">App 3</span></button></li>
+                    <li><button class="appItem" style="--c: #2ecc71"><span class="appIcon"></span><span class="appName">App 4</span></button></li>
+                    <li><button class="appItem" style="--c: #1abc9c"><span class="appIcon"></span><span class="appName">App 5</span></button></li>
+                    <li><button class="appItem" style="--c: #3498db"><span class="appIcon"></span><span class="appName">App 6</span></button></li>
+                    <li><button class="appItem" style="--c: #9b59b6"><span class="appIcon"></span><span class="appName">App 7</span></button></li>
+                    <li><button class="appItem" style="--c: #e84393"><span class="appIcon"></span><span class="appName">App 8</span></button></li>
+                    <li><button class="appItem" style="--c: #8d6e63"><span class="appIcon"></span><span class="appName">App 9</span></button></li>
+                    <li><button class="appItem" style="--c: #607d8b"><span class="appIcon"></span><span class="appName">App 10</span></button></li>
+                </ul>
+
+                <div class="startSearchBar">
+                    <div class="searchBox">
+                        <input type="text" placeholder="Search programs and files" aria-label="Search programs and files">
+                        <svg class="searchIcon" viewBox="0 0 16 16" aria-hidden="true">
+                            <circle cx="6.5" cy="6.5" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                            <line x1="9.8" y1="9.8" x2="14" y2="14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: profile pic + glass links -->
             <div class="userPfpFrame"><img class="userPfp" src="/flower.png" alt="flower pfp"></div>
+
+            <nav class="startRight">
+                <a class="rightItem" href="#">thesupersupersigma</a>
+                <a class="rightItem" href="#">Documents</a>
+                <a class="rightItem" href="#">Pictures</a>
+                <a class="rightItem" href="#">Music</a>
+                <div class="rightSep"></div>
+                <a class="rightItem" href="#">Games</a>
+                <a class="rightItem" href="#">Computer</a>
+                <div class="rightSep"></div>
+                <a class="rightItem" href="#">Control Panel</a>
+                <a class="rightItem" href="#">Devices and Printers</a>
+                <a class="rightItem" href="#">Default Programs</a>
+                <a class="rightItem" href="#">Help and Support</a>
+            </nav>
+
+            <button class="shutdownButton">Shut down</button>
         </div>
     </div>
 </body>
