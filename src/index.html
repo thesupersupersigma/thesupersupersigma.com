@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" href="./styles.css">
     <title>hi</title>
+    <script src="./TSSS.js"></script>
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
@@ -12,27 +13,23 @@
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
     <link rel="icon" href="/favicon.ico">
-    <script src="./TSSS.js" defer></script>
-    <link rel="preload" href="./windows7BG.jpg" as="image" />
-    <link rel="preload" href="/taskbar/taskbar.png" as="image" />
     <script src="./script.js" defer></script>
 </head>
 <body>
     <div class="windows7">
         <div class="taskbar">
             <div class="buttons">
-                <button id="startMenuButton" onclick="alert('startMenu')"></button>
+                <button id="startMenuButton"></button>
                 <button id="internetExplorerButton" class="taskbarApp"></button>
-                <button id="mediaPlayer" class="taskbarApp"><img src="/mediaPlayer.png" class="taskbarIcon" alt="mediaPlayer Icon"></button>
+                <button id="mediaPlayerButton" class="taskbarApp"><img src="/icons/mediaPlayer.png" class="taskbarIcon" alt="mediaPlayer Icon"></button>
             </div>
         </div>
         <div id="startMenu">
-            <!-- Left: white app panel -->
             <div class="appPanel">
                 <ul class="appList">
                     <!-- placeholder apps: change --c for the icon color -->
-                    <li><button class="appItem" style="--c: #e74c3c"><span class="appIcon"></span><span class="appName">App 1</span></button></li>
-                    <li><button class="appItem" style="--c: #e67e22"><span class="appIcon"></span><span class="appName">App 2</span></button></li>
+                    <li><button class="appItem"><img class="appIcon" src="/icons/IE.png" alt="internetExplorer icon"><span class="appName">Internet Explorer</span></button></li>
+                    <li><button class="appItem"><img class="appIcon" src="/icons/mediaPlayer.png" alt="mediaPlayer icon"><span class="appName">Windows Media Player</span></button></li>
                     <li><button class="appItem" style="--c: #f1c40f"><span class="appIcon"></span><span class="appName">App 3</span></button></li>
                     <li><button class="appItem" style="--c: #2ecc71"><span class="appIcon"></span><span class="appName">App 4</span></button></li>
                     <li><button class="appItem" style="--c: #1abc9c"><span class="appIcon"></span><span class="appName">App 5</span></button></li>
@@ -42,7 +39,6 @@
                     <li><button class="appItem" style="--c: #8d6e63"><span class="appIcon"></span><span class="appName">App 9</span></button></li>
                     <li><button class="appItem" style="--c: #607d8b"><span class="appIcon"></span><span class="appName">App 10</span></button></li>
                 </ul>
-
                 <div class="startSearchBar">
                     <div class="searchBox">
                         <input type="text" placeholder="Search programs and files" aria-label="Search programs and files">
@@ -53,30 +49,24 @@
                     </div>
                 </div>
             </div>
-
             <!-- Right: profile pic + glass links -->
             <div class="userPfpFrame"><img class="userPfp" src="/flower.png" alt="flower pfp"></div>
-
             <nav class="startRight">
-                <a class="rightItem" href="#">thesupersupersigma</a>
+                <a class="rightItem" href="https://github.com/thesupersupersigma">thesupersupersigma</a>
                 <a class="rightItem" href="#">Documents</a>
-                <a class="rightItem" href="#">Pictures</a>
+                <a class="rightItem" href="https://media.thesupersupersigma.com/kimBooty.gif">Pictures</a>
                 <a class="rightItem" href="#">Music</a>
                 <div class="rightSep"></div>
-                <a class="rightItem" href="#">Games</a>
+                <a class="rightItem" href="https://rustyac.com">Games</a>
                 <a class="rightItem" href="#">Computer</a>
                 <div class="rightSep"></div>
                 <a class="rightItem" href="#">Control Panel</a>
                 <a class="rightItem" href="#">Devices and Printers</a>
                 <a class="rightItem" href="#">Default Programs</a>
-                <a class="rightItem" href="#">Help and Support</a>
+                <a class="rightItem" href="mailto:thesupersupersigma.com">Help and Support</a>
             </nav>
-
             <button class="shutdownButton">Shut down</button>
         </div>
     </div>
 </body>
-<!-- <footer class="footer">
-    <h6 id="credit" style="font-family: Syne; color: whitesmoke;">© 2026 <a href="https://github.com/thesupersupersigma">thesupersupersigma</a></h6>
-</footer> -->
 </html>
