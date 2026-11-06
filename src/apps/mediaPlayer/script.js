@@ -575,7 +575,11 @@ function startCurrent() {
     const isVid = item.kind === "video";
     videoStage.hidden = !isVid;
     contentPane.classList.toggle("covered", isVid);
-    if (isVid) contentPane.scrollTop = 0;
+    if (isVid) {
+        // the stage covers the pane from the top-left, so scroll back there first
+        contentPane.scrollTop = 0;
+        contentPane.scrollLeft = 0;
+    }
 
     markPlayingRow();
 }
@@ -705,6 +709,7 @@ function openPicture(item) {
     pictureViewer.hidden = false;
     contentPane.classList.add("covered");
     contentPane.scrollTop = 0;
+    contentPane.scrollLeft = 0;
 }
 
 function closeOverlays() {
