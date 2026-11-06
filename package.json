@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Pray theres no errors\" && exit 1",
     "dev": "vite src",
-    "build": "vite build src",
-    "preview": "vite preview"
+    "build": "vite build src --outDir ../dist",
+    "preview": "vite preview --outDir ../dist"
   },
   "repository": {
     "type": "git",
