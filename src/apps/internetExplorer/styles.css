@@ -1,0 +1,388 @@
+/* Internet Explorer 11 on Windows 7 (default, uncustomized).
+   The window frame + caption buttons come from ../shared/window.css */
+
+/* ---------- Toolbar row ---------- */
+
+.ieToolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    margin-top: 22px;   /* empty glass strip above, where the caption buttons hang */
+    margin-bottom: 4px;
+}
+
+.ieToolbar button {
+    font: inherit;
+    cursor: default;
+}
+
+/* ---------- Back / forward ---------- */
+
+/* normal: clear glass circle with a blue ring and arrow. hover: fills blue, arrow turns white */
+.navBtn {
+    flex: none;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid #2a74c4;
+    background: radial-gradient(circle at 50% 25%,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.12) 55%,
+      rgba(255, 255, 255, 0.04) 100%);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.6),    /* light halo around the ring */
+      inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.navBtn svg {
+    fill: none;
+    stroke: #1f6cbf;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+}
+
+.navBtn:hover:not(:disabled) {
+    border-color: #1858a3;
+    background: radial-gradient(circle at 50% 28%, #7cbcf6 0%, #2a86e0 50%, #1460b8 100%);
+}
+
+.navBtn:hover:not(:disabled) svg,
+.navBtn:active:not(:disabled) svg {
+    stroke: #fff;
+}
+
+.navBtn:active:not(:disabled) {
+    border-color: #0f4686;
+    background: radial-gradient(circle at 50% 70%, #5aa6ec 0%, #1a6cc4 50%, #0d4a94 100%);
+}
+
+/* nothing to go back/forward to */
+.navBtn:disabled {
+    opacity: 0.5;
+}
+
+.backBtn {
+    width: 32px;
+    height: 32px;
+    margin-left: 1px;
+}
+
+.backBtn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.3;
+}
+
+.forwardBtn {
+    width: 26px;
+    height: 26px;
+    margin-left: -3px;
+}
+
+.forwardBtn svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.3;
+}
+
+/* ---------- Address bar ---------- */
+
+.addressBar {
+    flex: 0 1 45%;
+    min-width: 180px;
+    height: 24px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.33);
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.addressBar:hover,
+.addressBar:focus-within {
+    border-color: rgba(51, 120, 190, 0.85);
+}
+
+.addrIcon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    margin: 0 4px 0 5px;
+    -webkit-user-drag: none;
+}
+
+.addrInput {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    color: #000;
+    user-select: text;
+}
+
+.addrBtn {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid transparent;
+}
+
+.addrBtn svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: #4d4d4d;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.addrBtn .solid {
+    fill: #4d4d4d;
+    stroke: none;
+}
+
+.dropBtn {
+    width: 12px;
+}
+
+.dropBtn svg {
+    width: 8px;
+    height: 8px;
+}
+
+.addrBtn:hover {
+    background: #e5f1fb;
+    border-color: #7eb4ea;
+}
+
+/* ---------- Tabs ---------- */
+
+/* tabs shrink to share the space when there are a lot of them, like IE11 */
+.tabs {
+    flex: 0 1 auto;
+    min-width: 0;
+    display: flex;
+    gap: 2px;
+    height: 24px;
+}
+
+.tab {
+    flex: 0 1 220px;
+    min-width: 34px;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 3px 0 6px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    /* background tabs are glass */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.18));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+    cursor: default;
+}
+
+.tab:hover {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.45));
+}
+
+/* the tab you're on is solid white */
+.tab.active {
+    border-color: rgba(0, 0, 0, 0.35);
+    background: linear-gradient(to bottom, #ffffff, #f2f6fb);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+.tabIcon {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    fill: #fff;
+    stroke: #7a8796;
+    stroke-width: 1;
+    stroke-linejoin: round;
+}
+
+/* spinning circle in place of the icon while the page loads */
+.tabSpinner {
+    display: none;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: #2a7bd0;
+    stroke-width: 2;
+    stroke-dasharray: 22 13;
+    stroke-linecap: round;
+    animation: tabSpin 0.9s linear infinite;
+}
+
+.tab.loading .tabIcon {
+    display: none;
+}
+
+.tab.loading .tabSpinner {
+    display: block;
+}
+
+@keyframes tabSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* the close button only shows on the current tab, or a tab you hover */
+.tab:not(.active):not(:hover) .tabClose {
+    visibility: hidden;
+}
+
+/* very narrow tabs drop their close button entirely */
+.tab.narrow .tabClose,
+.tab.narrow .tabTitle {
+    display: none;
+}
+
+.tabTitle {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tabClose {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+.tabClose svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: #6d6d6d;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+}
+
+.tabClose:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.tabClose:hover svg {
+    stroke: #000;
+}
+
+/* small empty "new tab" button after the tabs */
+.newTab {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 100%;
+    padding: 0;
+    border: 1px solid rgba(0, 0, 0, 0.28);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.15));
+}
+
+.newTab svg {
+    width: 14px;
+    height: 14px;
+    fill: #fff;
+    stroke: #7a8796;
+    stroke-width: 1;
+    stroke-linejoin: round;
+    opacity: 0;               /* hidden until hover, like IE11 */
+    transition: opacity 0.15s;
+}
+
+.newTab:hover {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4));
+}
+
+.newTab:hover svg {
+    opacity: 0.8;
+}
+
+.spacer {
+    flex: 1;
+}
+
+/* ---------- Home / Favorites / Tools ---------- */
+
+.toolIcons {
+    flex: none;
+    display: flex;
+    gap: 4px;
+    margin-right: 2px;
+}
+
+.toolBtn {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+}
+
+/* solid white glyphs with a soft dark glow so they read on the glass */
+.toolBtn svg {
+    width: 18px;
+    height: 18px;
+    fill: #fff;
+    stroke: none;
+    filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.55));
+}
+
+.toolBtn:hover {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15));
+    border-color: rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.toolBtn:active {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- Page area ---------- */
+
+.ieViewport {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+}
+
+/* one iframe per tab; only the current tab's is shown */
+.tabFrame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #fff;
+    visibility: hidden;
+}
+
+.tabFrame.active {
+    visibility: visible;
+}

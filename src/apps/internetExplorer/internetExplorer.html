@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Internet Explorer</title>
+        <link rel="stylesheet" href="../shared/window.css">
+        <link rel="stylesheet" href="./styles.css">
+        <script type="module" src="./script.js"></script>
+    </head>
+    <body data-app="internetExplorer">
+        <div class="window">
+
+            <!-- Win7 caption buttons (top right) -->
+            <div class="captionButtons">
+                <button class="captionBtn minBtn" aria-label="Minimize">
+                    <svg viewBox="0 0 10 10"><rect x="1.5" y="6" width="7" height="2.5"/></svg>
+                </button>
+                <button class="captionBtn maxBtn" aria-label="Maximize">
+                    <svg class="glyphMax" viewBox="0 0 10 10"><path fill-rule="evenodd" d="M1 1.5h8v7H1z M2.5 4v3h5V4z"/></svg>
+                    <svg class="glyphRestore" viewBox="0 0 10 10"><path fill-rule="evenodd" d="M3 .5h6.5v5.5H8.2V2.6H3z M.5 3.5h6.5v6H.5z M1.9 5.4v2.8h3.7V5.4z"/></svg>
+                </button>
+                <button class="captionBtn closeBtn" aria-label="Close">
+                    <svg viewBox="0 0 10 10">
+                        <path class="xOutline" d="M2 2 8 8 M8 2 2 8"/>
+                        <path class="xFill" d="M2 2 8 8 M8 2 2 8"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- IE toolbar: back/forward, address bar, tabs, home/favorites/tools (empty spots drag the window) -->
+            <div class="ieToolbar" data-drag>
+                <button class="navBtn backBtn" id="backBtn" aria-label="Back">
+                    <svg viewBox="0 0 16 16"><path d="M12.5 8H4.2 M7.8 4.2 4 8l3.8 3.8"/></svg>
+                </button>
+                <button class="navBtn forwardBtn" id="forwardBtn" aria-label="Forward">
+                    <svg viewBox="0 0 16 16"><path d="M3.5 8h8.3 M8.2 4.2 12 8l-3.8 3.8"/></svg>
+                </button>
+
+                <div class="addressBar" data-no-drag>
+                    <img class="addrIcon" src="/icons/IE.png" alt="">
+                    <input class="addrInput" id="addrInput" type="text" aria-label="Address" spellcheck="false">
+                    <button class="addrBtn" id="goBtn" aria-label="Search">
+                        <svg viewBox="0 0 16 16"><circle cx="6.5" cy="6.5" r="4"/><path d="M9.5 9.5l4 4"/></svg>
+                    </button>
+                    <button class="addrBtn dropBtn" aria-label="Show suggestions">
+                        <svg viewBox="0 0 8 8"><path class="solid" d="M1 3h6L4 6z"/></svg>
+                    </button>
+                    <button class="addrBtn" id="refreshBtn" aria-label="Refresh">
+                        <svg viewBox="0 0 16 16"><path d="M12.8 8.5a4.8 4.8 0 1 1-1.4-3.9 M12.2 2v3h-3"/></svg>
+                    </button>
+                </div>
+
+                <!-- tabs are added by script.js, in front of the new-tab button -->
+                <div class="tabs" id="tabs">
+                    <!-- IE11's "new tab" button: an empty box that shows a faint tab icon on hover -->
+                    <button class="newTab" id="newTabBtn" aria-label="New tab">
+                        <svg viewBox="0 0 16 16"><path d="M4 1.5h5.5l3 3v10H4z M9.5 1.5v3h3"/></svg>
+                    </button>
+                </div>
+
+                <div class="spacer"></div>
+
+                <div class="toolIcons">
+                    <!-- IE11 uses solid glyphs for these -->
+                    <button class="toolBtn" id="homeBtn" aria-label="Home">
+                        <svg viewBox="0 0 18 18"><path d="M9 2.2 1.4 9h2.4v6.6h4v-4.4h2.4v4.4h4V9h2.4z"/></svg>
+                    </button>
+                    <button class="toolBtn" aria-label="Favorites">
+                        <svg viewBox="0 0 18 18"><path d="M9 1.5l2.3 4.8 5.2.7-3.8 3.6.9 5.2L9 13.3l-4.6 2.5.9-5.2L1.5 7l5.2-.7z"/></svg>
+                    </button>
+                    <button class="toolBtn" aria-label="Tools">
+                        <svg viewBox="0 0 18 18">
+                            <defs>
+                                <mask id="gearHole">
+                                    <rect width="18" height="18" fill="#fff"/>
+                                    <circle cx="9" cy="9" r="2.4" fill="#000"/>
+                                </mask>
+                            </defs>
+                            <g mask="url(#gearHole)">
+                                <circle cx="9" cy="9" r="5.6"/>
+                                <rect x="7.5" y="1" width="3" height="4" rx="0.5"/>
+                                <rect x="7.5" y="1" width="3" height="4" rx="0.5" transform="rotate(45 9 9)"/>
+                                <rect x="7.5" y="1" width="3" height="4" rx="0.5" transform="rotate(90 9 9)"/>
+                                <rect x="7.5" y="1" width="3" height="4" rx="0.5" transform="rotate(135 9 9)"/>
+                                <rect x="7.5" y="1" width="3" height="4" rx="0.5" transform="rotate(180 9 9)"/>
+                                <rect x="7.5" y="1" width="3" height="4" rx="0.5" transform="rotate(225 9 9)"/>
+                                <rect x="7.5" y="1" width="3" height="4" rx="0.5" transform="rotate(270 9 9)"/>
+                                <rect x="7.5" y="1" width="3" height="4" rx="0.5" transform="rotate(315 9 9)"/>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- page area: each tab gets its own iframe in here -->
+            <div class="ieViewport" id="viewport"></div>
+
+            <!-- copied for each new tab -->
+            <template id="tabTemplate">
+                <div class="tab" data-no-drag>
+                    <svg class="tabIcon" viewBox="0 0 16 16"><path d="M4 1.5h5.5l3 3v10H4z M9.5 1.5v3h3"/></svg>
+                    <svg class="tabSpinner" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/></svg>
+                    <span class="tabTitle">New tab</span>
+                    <button class="tabClose" aria-label="Close tab">
+                        <svg viewBox="0 0 16 16"><path d="M4.5 4.5l7 7 M11.5 4.5l-7 7"/></svg>
+                    </button>
+                </div>
+            </template>
+
+        </div>
+    </body>
+</html>
