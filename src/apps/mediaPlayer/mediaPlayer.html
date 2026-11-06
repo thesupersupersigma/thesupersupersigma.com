@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Windows Media Player</title>
+        <link rel="stylesheet" href="../shared/window.css">
+        <link rel="stylesheet" href="./styles.css">
+        <script type="module" src="./script.js"></script>
+    </head>
+    <body data-app="mediaPlayer">
+        <div class="window wmp">
+
+            <!-- Win7 caption buttons (top right) -->
+            <div class="captionButtons">
+                <button class="captionBtn minBtn" aria-label="Minimize">
+                    <svg viewBox="0 0 10 10"><rect x="1.5" y="6" width="7" height="2.5"/></svg>
+                </button>
+                <button class="captionBtn maxBtn" aria-label="Maximize">
+                    <svg class="glyphMax" viewBox="0 0 10 10"><path fill-rule="evenodd" d="M1 1.5h8v7H1z M2.5 4v3h5V4z"/></svg>
+                    <svg class="glyphRestore" viewBox="0 0 10 10"><path fill-rule="evenodd" d="M3 .5h6.5v5.5H8.2V2.6H3z M.5 3.5h6.5v6H.5z M1.9 5.4v2.8h3.7V5.4z"/></svg>
+                </button>
+                <button class="captionBtn closeBtn" aria-label="Close">
+                    <svg viewBox="0 0 10 10">
+                        <path class="xOutline" d="M2 2 8 8 M8 2 2 8"/>
+                        <path class="xFill" d="M2 2 8 8 M8 2 2 8"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Title bar -->
+            <div class="titleBar" data-drag>
+                <img class="titleIcon" src="/icons/mediaPlayer.png" alt="">
+                <span class="titleText">Windows Media Player</span>
+            </div>
+
+            <!-- Back / forward, breadcrumb, Play / Burn / Sync tabs -->
+            <div class="navRow" data-drag>
+                <button class="navBtn backBtn" id="backBtn" aria-label="Back" disabled>
+                    <svg viewBox="0 0 16 16"><path d="M12.5 8H4.2 M7.8 4.2 4 8l3.8 3.8"/></svg>
+                </button>
+                <button class="navBtn forwardBtn" id="forwardBtn" aria-label="Forward" disabled>
+                    <svg viewBox="0 0 16 16"><path d="M3.5 8h8.3 M8.2 4.2 12 8l-3.8 3.8"/></svg>
+                </button>
+                <nav class="breadcrumb" id="breadcrumb"></nav>
+                <div class="modeTabs">
+                    <button class="modeTab">Play</button>
+                    <button class="modeTab">Burn</button>
+                    <button class="modeTab">Sync</button>
+                </div>
+            </div>
+
+            <!-- Everything below the glass -->
+            <div class="client">
+
+                <!-- Command bar -->
+                <div class="commandBar">
+                    <button class="cmdBtn">Organize <svg class="caret" viewBox="0 0 8 8"><path d="M1 3h6L4 6z"/></svg></button>
+                    <button class="cmdBtn">Stream <svg class="caret" viewBox="0 0 8 8"><path d="M1 3h6L4 6z"/></svg></button>
+                    <div class="splitBtn">
+                        <button class="cmdBtn">Create playlist</button>
+                        <button class="cmdBtn caretOnly" aria-label="More"><svg class="caret" viewBox="0 0 8 8"><path d="M1 3h6L4 6z"/></svg></button>
+                    </div>
+
+                    <div class="cmdSpacer"></div>
+
+                    <button class="cmdBtn viewBtn" aria-label="View options">
+                        <svg class="viewIcon" viewBox="0 0 16 16">
+                            <rect x="1.5" y="2" width="3" height="3"/><rect x="6" y="2.5" width="8.5" height="2"/>
+                            <rect x="1.5" y="6.5" width="3" height="3"/><rect x="6" y="7" width="8.5" height="2"/>
+                            <rect x="1.5" y="11" width="3" height="3"/><rect x="6" y="11.5" width="8.5" height="2"/>
+                        </svg>
+                        <svg class="caret" viewBox="0 0 8 8"><path d="M1 3h6L4 6z"/></svg>
+                    </button>
+                    <div class="searchBox">
+                        <input id="search" type="text" placeholder="Search" aria-label="Search" spellcheck="false">
+                        <svg class="searchIcon" viewBox="0 0 16 16"><circle cx="6.5" cy="6.5" r="4"/><path d="M9.5 9.5l4 4"/></svg>
+                        <svg class="caret" viewBox="0 0 8 8"><path d="M1 3h6L4 6z"/></svg>
+                    </div>
+                    <button class="helpBtn" aria-label="Help">?</button>
+                </div>
+
+                <div class="main">
+
+                    <!-- Navigation pane -->
+                    <aside class="navPane">
+                        <ul class="tree">
+                            <li><button class="treeItem" data-view="library">
+                                <svg class="treeIcon" viewBox="0 0 16 16"><path class="f" d="M2 2.5h3v11H2z M6 2.5h3v11H6z M10.2 3.2l2.6-.7 2.6 10.4-2.6.7z"/></svg>Library</button></li>
+                            <li><button class="treeItem" data-view="playlists">
+                                <svg class="treeIcon" viewBox="0 0 16 16"><path class="s" d="M1.5 3.5h9 M1.5 6.5h9 M1.5 9.5h5"/><path class="f" d="M9 8.5v6l4.8-3z"/></svg>Playlists</button></li>
+                            <li>
+                                <button class="treeItem" data-view="music">
+                                    <span class="expander"></span>
+                                    <svg class="treeIcon" viewBox="0 0 16 16"><path class="s" d="M6 12.5V3.2l7.5-1.4v9.4"/><circle class="f" cx="4.3" cy="12.5" r="2"/><circle class="f" cx="11.8" cy="11.2" r="2"/></svg>Music</button>
+                                <ul>
+                                    <li><button class="treeItem sub" data-view="artist">
+                                        <svg class="treeIcon" viewBox="0 0 16 16"><circle class="s" cx="8" cy="5" r="2.7"/><path class="s" d="M3 14.5c.5-3 2.5-4.6 5-4.6s4.5 1.6 5 4.6"/></svg>Artist</button></li>
+                                    <li><button class="treeItem sub" data-view="album">
+                                        <svg class="treeIcon" viewBox="0 0 16 16"><circle class="s" cx="8" cy="8" r="6"/><circle class="f" cx="8" cy="8" r="1.7"/></svg>Album</button></li>
+                                    <li><button class="treeItem sub" data-view="genre">
+                                        <svg class="treeIcon" viewBox="0 0 16 16"><circle class="s" cx="8" cy="8" r="6"/><path class="s" d="M8 2v12 M2 8h12"/></svg>Genre</button></li>
+                                </ul>
+                            </li>
+                            <li><button class="treeItem" data-view="videos">
+                                <svg class="treeIcon" viewBox="0 0 16 16"><rect class="s" x="1.5" y="3.5" width="13" height="9"/><path class="s" d="M4.2 3.5v9 M11.8 3.5v9"/></svg>Videos</button></li>
+                            <li><button class="treeItem" data-view="pictures">
+                                <svg class="treeIcon" viewBox="0 0 16 16"><rect class="s" x="1.5" y="2.5" width="13" height="11"/><path class="s" d="M2 12.5l4-4.5 3 3 2-2 3.5 3.5"/><circle class="f" cx="11" cy="5.6" r="1.3"/></svg>Pictures</button></li>
+                        </ul>
+                        <button class="treeItem otherLibraries">
+                            <svg class="treeIcon" viewBox="0 0 16 16"><circle class="s" cx="5.5" cy="5.5" r="2.2"/><circle class="s" cx="11" cy="6" r="1.8"/><path class="s" d="M1.5 13.5c.4-2.6 2-3.9 4-3.9s3.6 1.3 4 3.9 M10 9.6c2 0 3.6 1.1 4 3.4"/></svg>Other Libraries</button>
+
+                        <div class="navSpacer"></div>
+
+                        <button class="mediaGuide">
+                            <svg class="guideIcon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="12" rx="4" ry="9.5"/><path d="M2.5 12h19 M4.5 7h15 M4.5 17h15"/></svg>
+                            Media Guide
+                            <svg class="caret" viewBox="0 0 8 8"><path d="M1 3h6L4 6z"/></svg>
+                        </button>
+                    </aside>
+
+                    <!-- Content (columns + list) -->
+                    <section class="contentPane" id="contentPane">
+                        <div class="columnHeaders" id="columnHeaders">
+                            <div class="colHead">Album</div>
+                            <div class="trackCols">
+                                <div class="colHead">#</div>
+                                <div class="colHead">Title</div>
+                                <div class="colHead">Length</div>
+                                <div class="colHead">Rating</div>
+                                <div class="colHead">Contributing artist</div>
+                                <div class="colHead">Composer</div>
+                                <div class="colHead">Size</div>
+                                <div class="colHead">Parental rating</div>
+                            </div>
+                        </div>
+                        <div class="listArea" id="listArea"></div>
+
+                        <!-- loading / empty / error message (the placeholder for the list) -->
+                        <div class="placeholder" id="placeholder" hidden>
+                            <div class="placeholderText" id="placeholderText"></div>
+                            <div class="placeholderDetail" id="placeholderDetail"></div>
+                        </div>
+
+                        <!-- shown while a video is playing -->
+                        <div class="videoStage" id="videoStage" hidden>
+                            <button class="stageClose" id="stageClose" aria-label="Back to library">
+                                <svg viewBox="0 0 16 16"><path d="M4.5 4.5l7 7 M11.5 4.5l-7 7"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- shown when a picture is opened -->
+                        <div class="pictureViewer" id="pictureViewer" hidden>
+                            <img id="pictureImg" alt="">
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Seek bar -->
+                <div class="seekBar" id="seekBar" data-no-drag>
+                    <div class="seekFill" id="seekFill"></div>
+                    <div class="seekThumb" id="seekThumb"></div>
+                </div>
+
+                <!-- Player controls -->
+                <div class="playerBar">
+                    <div class="nowPlaying">
+                        <img class="nowThumb" id="nowThumb" src="/icons/mediaPlayer.png" alt="">
+                        <span class="nowText" id="nowText"></span>
+                    </div>
+
+                    <div class="controls">
+                        <span class="time" id="time">00:00</span>
+
+                        <div class="pill leftPill">
+                            <button class="ctrl" id="shuffleBtn" aria-label="Turn shuffle on">
+                                <svg viewBox="0 0 20 20"><path class="s" d="M2 6h3.2c2 0 3 1 4.5 4s2.5 4 4.5 4H17 M2 14h3.2c2 0 3-1 4.5-4s2.5-4 4.5-4H17 M14.8 3.8 17.2 6l-2.4 2.2 M14.8 11.8l2.4 2.2-2.4 2.2"/></svg>
+                            </button>
+                            <button class="ctrl" id="repeatBtn" aria-label="Turn repeat on">
+                                <svg viewBox="0 0 20 20"><path class="s" d="M15.6 8.4A6 6 0 1 0 15 13.2 M16.2 4.2v4.4h-4.4"/></svg>
+                            </button>
+                            <span class="pillSep"></span>
+                            <button class="ctrl" id="stopBtn" aria-label="Stop">
+                                <svg viewBox="0 0 20 20"><rect class="f" x="5.5" y="5.5" width="9" height="9"/></svg>
+                            </button>
+                        </div>
+
+                        <div class="transport">
+                            <div class="pill transportPill">
+                                <button class="ctrl" id="prevBtn" aria-label="Previous">
+                                    <svg viewBox="0 0 20 20"><path class="f" d="M4 5h2v10H4z M11 5v10L6 10z M16.5 5v10l-5-5z"/></svg>
+                                </button>
+                                <span class="playGap"></span>
+                                <button class="ctrl" id="nextBtn" aria-label="Next">
+                                    <svg viewBox="0 0 20 20"><path class="f" d="M14 5h2v10h-2z M9 5v10l5-5z M3.5 5v10l5-5z"/></svg>
+                                </button>
+                            </div>
+                            <button class="playBtn" id="playBtn" aria-label="Play">
+                                <svg class="iconPlay" viewBox="0 0 20 20"><path d="M7 4.5v11l9-5.5z"/></svg>
+                                <svg class="iconPause" viewBox="0 0 20 20"><path d="M5.5 4.5h3.2v11H5.5z M11.3 4.5h3.2v11h-3.2z"/></svg>
+                            </button>
+                        </div>
+
+                        <div class="pill rightPill">
+                            <button class="ctrl" id="muteBtn" aria-label="Mute">
+                                <svg viewBox="0 0 20 20">
+                                    <path class="f" d="M3 7.5h3l4-3.5v12l-4-3.5H3z"/>
+                                    <path class="s waves" d="M12.5 7.2a4 4 0 0 1 0 5.6 M14.6 5.2a7 7 0 0 1 0 9.6"/>
+                                    <g class="mutedMark"><circle cx="14.5" cy="10" r="3.6"/><path d="M12.4 7.9l4.2 4.2"/></g>
+                                </svg>
+                            </button>
+                            <input class="volume" id="volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+                        </div>
+                    </div>
+
+                    <button class="nowPlayingSwitch" aria-label="Switch to Now Playing">
+                        <svg viewBox="0 0 16 16"><path d="M1.5 1.5h5v5h-5z M9.5 1.5h5v5h-5z M1.5 9.5h5v5h-5z M9.5 9.5h5v5h-5z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- one element plays both music and video -->
+            <video id="player" class="player" playsinline></video>
+        </div>
+    </body>
+</html>

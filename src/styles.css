@@ -467,3 +467,35 @@ img.appIcon {
       rgba(60, 140, 200, 0.3) 100%);
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
+
+/* ---------- App windows (iframes) ---------- */
+
+/* the window frame is drawn inside the app page; this just sizes and places it */
+.appFrame {
+    display: none;
+    position: fixed;
+    top: 60px;
+    left: 150px;
+    width: min(900px, calc(100vw - 170px));
+    height: min(600px, calc(100vh - 130px));
+    border: none;
+    background: transparent;
+    border-radius: 6px 6px 4px 4px;   /* same corners as the window inside, so the blur doesn't poke out */
+
+    /* Aero glass: blurs the desktop behind the window. Has to live here, because
+       backdrop-filter inside the iframe can't see the page outside it */
+    -webkit-backdrop-filter: blur(8px) saturate(1.5);
+    backdrop-filter: blur(8px) saturate(1.5);
+
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);   /* window shadow */
+    z-index: 500;   /* below the taskbar and start menu (1000) */
+}
+
+.appFrame.maximized {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.appFrame.visible {
+    display: block;
+}
