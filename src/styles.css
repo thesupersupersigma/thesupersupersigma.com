@@ -68,7 +68,7 @@ a:visited {
 #startMenuButton {
     left: 0px;
     position: fixed;
-    background-color: rgb(192, 33, 33, 0.3);
+    background-color: rgb(192, 33, 33, 0); /* Change alpha to like 0.3 */
     width: 70px;
     height: 100%;
     border: none;
