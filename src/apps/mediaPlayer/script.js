@@ -566,6 +566,8 @@ function startCurrent() {
     const item = queue[queueIndex];
     if (!item) return;
 
+    pendingSeek = null;
+    checkRangeSupport(item.url);
     player.src = item.url;
     player.play().catch(() => {});
 
@@ -676,19 +678,73 @@ player.addEventListener("pause", () => {
     playBtn.setAttribute("aria-label", "Play");
 });
 
-player.addEventListener("timeupdate", () => {
-    timeText.textContent = formatClock(player.currentTime);
-    const pct = player.duration ? (player.currentTime / player.duration) * 100 : 0;
+function showPosition(seconds) {
+    const pct = player.duration ? (seconds / player.duration) * 100 : 0;
     seekFill.style.width = pct + "%";
     seekThumb.style.left = pct + "%";
+}
+
+player.addEventListener("timeupdate", () => {
+    timeText.textContent = formatClock(player.currentTime);
+    if (pendingSeek == null) showPosition(player.currentTime);
 });
+
+// ----- seeking -----
+// Seeking to a part of a song that hasn't downloaded yet needs the server to support
+// "range requests" (send me just this part of the file). If it doesn't (Cloudflare in
+// front of the media server currently doesn't), the browser can only seek inside what
+// it has already downloaded. So in that case we remember where you wanted to go and
+// jump there as soon as that part arrives.
+
+let pendingSeek = null;       // seconds we're waiting to jump to
+let rangeSupport = null;      // null = not checked yet, true / false once we know
+
+async function checkRangeSupport(url) {
+    if (rangeSupport !== null) return;
+    try {
+        const res = await fetch(url, { headers: { Range: "bytes=0-1" } });
+        rangeSupport = res.status === 206;
+        res.body?.cancel();   // only needed the answer, not the file
+    } catch {
+        rangeSupport = false;
+    }
+}
+
+function isDownloaded(seconds) {
+    const b = player.buffered;
+    for (let i = 0; i < b.length; i++) {
+        if (seconds >= b.start(i) && seconds <= b.end(i) - 0.25) return true;
+    }
+    return false;
+}
+
+function seekToTime(seconds) {
+    if (rangeSupport || isDownloaded(seconds)) {
+        pendingSeek = null;
+        player.currentTime = seconds;
+    } else {
+        pendingSeek = seconds;
+        showPosition(seconds);   // move the bar now so the click feels instant
+    }
+}
+
+// as more of the file downloads, jump once the spot we wanted is there
+function tryPendingSeek() {
+    if (pendingSeek != null && isDownloaded(pendingSeek)) {
+        player.currentTime = pendingSeek;
+        pendingSeek = null;
+    }
+}
+
+player.addEventListener("progress", tryPendingSeek);
+player.addEventListener("timeupdate", tryPendingSeek);
 
 // seek bar: click or drag
 function seekTo(event) {
     if (!player.duration) return;
     const box = seekBar.getBoundingClientRect();
     const ratio = Math.min(1, Math.max(0, (event.clientX - box.left) / box.width));
-    player.currentTime = ratio * player.duration;
+    seekToTime(ratio * player.duration);
 }
 
 seekBar.addEventListener("pointerdown", (event) => {
