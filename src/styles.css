@@ -499,3 +499,101 @@ img.appIcon {
 .appFrame.visible {
     display: block;
 }
+
+/* ---------- Desktop icons ---------- */
+
+/* the desktop area above the taskbar; icons are placed on a grid inside it by script.js.
+   Sizes are Win7 at 125% (your taskbar's scale): at 100% it's 48px icons on a ~75x85 grid. */
+.desktopIcons {
+    --iconSize: 60px;    /* icon image */
+    --cellW: 94px;       /* grid column width */
+    --cellH: 106px;      /* grid row height */
+    --gridX: 3px;        /* gap from the left edge of the screen */
+    --gridY: 3px;        /* gap from the top edge of the screen */
+
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 50px;        /* stop at the taskbar */
+    z-index: 1;          /* under app windows (500+) and the taskbar/start menu (1000) */
+}
+
+.desktopIcon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(var(--cellW) - 4px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 2px 4px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    font: 15px "Segoe UI", Tahoma, sans-serif;   /* Win7's 9pt Segoe UI at 125% */
+    color: #fff;
+    cursor: default;
+    user-select: none;
+    touch-action: none;
+}
+
+.desktopIcon img {
+    width: var(--iconSize);
+    height: var(--iconSize);
+    object-fit: contain;
+    pointer-events: none;
+    -webkit-user-drag: none;
+}
+
+/* white label with Win7's dark shadow; long names cut off at 2 lines */
+.desktopLabel {
+    max-width: 100%;
+    line-height: 1.2;
+    text-align: center;
+    word-break: break-word;
+    text-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.9),
+      0 0 3px rgba(0, 0, 0, 0.6);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+/* hover: faint glass box */
+.desktopIcon:hover {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+/* selected (single click): light blue box, full name shown */
+.desktopIcon.selected {
+    background: linear-gradient(to bottom, rgba(175, 215, 255, 0.45), rgba(120, 180, 250, 0.35));
+    border-color: rgba(190, 225, 255, 0.85);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.desktopIcon.selected:hover {
+    background: linear-gradient(to bottom, rgba(190, 225, 255, 0.55), rgba(135, 195, 255, 0.45));
+}
+
+.desktopIcon.selected .desktopLabel {
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+}
+
+/* while being dragged */
+.desktopIcon.dragging {
+    opacity: 0.75;
+    z-index: 2;
+}
+
+.desktopIcon:focus-visible {
+    outline: 1px dotted rgba(255, 255, 255, 0.8);
+    outline-offset: -3px;
+}

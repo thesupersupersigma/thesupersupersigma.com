@@ -17,6 +17,18 @@
 </head>
 <body>
     <div class="windows7">
+        <!-- Desktop Apps: snap to a grid like Win7 (drag to move, double-click to open).
+             data-app must match a name in the apps list in script.js. -->
+        <div class="desktopIcons" id="desktopIcons">
+            <button class="desktopIcon internetExplorerDesktopButton" data-app="internetExplorer">
+                <img src="/icons/IE.png" alt="" draggable="false">
+                <span class="desktopLabel">Internet Explorer</span>
+            </button>
+            <button class="desktopIcon mediaPlayerDesktopButton" data-app="mediaPlayer">
+                <img src="/icons/mediaPlayer.png" alt="" draggable="false">
+                <span class="desktopLabel">Windows Media Player</span>
+            </button>
+        </div>
         <div class="taskbar">
             <div class="buttons">
                 <button id="startMenuButton"></button>

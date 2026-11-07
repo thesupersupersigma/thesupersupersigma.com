@@ -222,3 +222,175 @@ shutdownButton.addEventListener("click", function () {
         shutdown = shutdown.toLowerCase();
     }
 });
+// ----- Desktop icons -----
+// Win7-style: icons sit on a grid (filled top-to-bottom, then the next column),
+// drag one and it snaps to the nearest free spot when dropped, double-click opens it.
+// Where you put them is remembered in this browser (localStorage).
+
+const desktopIconsEl = document.getElementById("desktopIcons");
+const desktopIcons = [...desktopIconsEl.querySelectorAll(".desktopIcon")];
+const ICON_POSITIONS_KEY = "desktopIconPositions";
+
+const iconCell = new Map();      // icon element -> { col, row }
+let iconDrag = null;             // the drag in progress, if any
+let justDragged = false;         // so a drag doesn't also count as a click
+
+// grid sizes come from the CSS variables on .desktopIcons
+function gridMetrics() {
+    const css = getComputedStyle(desktopIconsEl);
+    const px = (name) => parseFloat(css.getPropertyValue(name)) || 0;
+    const m = { cellW: px("--cellW"), cellH: px("--cellH"), gridX: px("--gridX"), gridY: px("--gridY") };
+    m.cols = Math.max(1, Math.floor((desktopIconsEl.clientWidth - m.gridX) / m.cellW));
+    m.rows = Math.max(1, Math.floor((desktopIconsEl.clientHeight - m.gridY) / m.cellH));
+    return m;
+}
+
+function cellToPixels(col, row, m) {
+    return { x: m.gridX + col * m.cellW + 2, y: m.gridY + row * m.cellH };
+}
+
+function moveIconTo(icon, x, y) {
+    icon.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+function isCellFree(col, row, ignore) {
+    for (const [icon, cell] of iconCell) {
+        if (icon !== ignore && cell.col === col && cell.row === row) return false;
+    }
+    return true;
+}
+
+// closest empty cell to (col, row), searching outward
+function nearestFreeCell(col, row, ignore, m) {
+    col = Math.min(Math.max(col, 0), m.cols - 1);
+    row = Math.min(Math.max(row, 0), m.rows - 1);
+    let best = null;
+    let bestDist = Infinity;
+    const maxRing = Math.max(m.cols, m.rows);
+    for (let ring = 0; ring <= maxRing; ring++) {
+        for (let c = col - ring; c <= col + ring; c++) {
+            for (let r = row - ring; r <= row + ring; r++) {
+                if (Math.max(Math.abs(c - col), Math.abs(r - row)) !== ring) continue;   // only this ring
+                if (c < 0 || r < 0 || c >= m.cols || r >= m.rows) continue;
+                if (!isCellFree(c, r, ignore)) continue;
+                const dist = (c - col) ** 2 + (r - row) ** 2;
+                if (dist < bestDist) { best = { col: c, row: r }; bestDist = dist; }
+            }
+        }
+        if (best) return best;
+    }
+    return { col, row };   // desktop completely full: stack it
+}
+
+// first empty cell in Win7 order: down the first column, then the next column
+function firstFreeCell(ignore, m) {
+    for (let c = 0; c < m.cols; c++) {
+        for (let r = 0; r < m.rows; r++) {
+            if (isCellFree(c, r, ignore)) return { col: c, row: r };
+        }
+    }
+    return { col: 0, row: 0 };
+}
+
+function loadIconPositions() {
+    try {
+        return JSON.parse(localStorage.getItem(ICON_POSITIONS_KEY)) || {};
+    } catch {
+        return {};
+    }
+}
+
+function saveIconPositions() {
+    const data = {};
+    for (const [icon, cell] of iconCell) data[icon.dataset.app] = cell;
+    try {
+        localStorage.setItem(ICON_POSITIONS_KEY, JSON.stringify(data));
+    } catch {
+        // storage blocked (private window etc.): positions just won't be remembered
+    }
+}
+
+// place every icon: remembered spot if it still fits, otherwise the next free one
+function layoutDesktopIcons() {
+    const m = gridMetrics();
+    const saved = loadIconPositions();
+    const previous = new Map(iconCell);
+    iconCell.clear();
+
+    for (const icon of desktopIcons) {
+        const wanted = previous.get(icon) || saved[icon.dataset.app];
+        const cell = wanted ? nearestFreeCell(wanted.col, wanted.row, icon, m) : firstFreeCell(icon, m);
+        iconCell.set(icon, cell);
+        const { x, y } = cellToPixels(cell.col, cell.row, m);
+        moveIconTo(icon, x, y);
+    }
+}
+
+function selectDesktopIcon(icon) {
+    for (const i of desktopIcons) i.classList.toggle("selected", i === icon);
+}
+
+for (const icon of desktopIcons) {
+    icon.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0) return;
+        startMenu.classList.remove("visible");
+        selectDesktopIcon(icon);
+        const cell = iconCell.get(icon);
+        const start = cellToPixels(cell.col, cell.row, gridMetrics());
+        iconDrag = { icon, pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, origin: start, moved: false };
+        icon.setPointerCapture(event.pointerId);
+    });
+
+    icon.addEventListener("pointermove", (event) => {
+        if (!iconDrag || iconDrag.icon !== icon) return;
+        const dx = event.clientX - iconDrag.startX;
+        const dy = event.clientY - iconDrag.startY;
+        if (!iconDrag.moved && Math.hypot(dx, dy) < 5) return;   // small wiggles are still a click
+        iconDrag.moved = true;
+        icon.classList.add("dragging");
+        moveIconTo(icon, iconDrag.origin.x + dx, iconDrag.origin.y + dy);
+    });
+
+    const endDrag = (event) => {
+        if (!iconDrag || iconDrag.icon !== icon) return;
+        if (icon.hasPointerCapture(event.pointerId)) icon.releasePointerCapture(event.pointerId);
+
+        if (iconDrag.moved) {
+            // snap to the closest grid cell (or the nearest free one if it's taken)
+            const m = gridMetrics();
+            const x = iconDrag.origin.x + (event.clientX - iconDrag.startX);
+            const y = iconDrag.origin.y + (event.clientY - iconDrag.startY);
+            const cell = nearestFreeCell(Math.round((x - m.gridX - 2) / m.cellW), Math.round((y - m.gridY) / m.cellH), icon, m);
+            iconCell.set(icon, cell);
+            const snapped = cellToPixels(cell.col, cell.row, m);
+            moveIconTo(icon, snapped.x, snapped.y);
+            icon.classList.remove("dragging");
+            saveIconPositions();
+            justDragged = true;
+            setTimeout(() => { justDragged = false; }, 0);
+        }
+        iconDrag = null;
+    };
+    icon.addEventListener("pointerup", endDrag);
+    icon.addEventListener("pointercancel", endDrag);
+
+    // double-click (or Enter) opens the app
+    icon.addEventListener("dblclick", () => {
+        if (!justDragged && apps[icon.dataset.app]) openApp(icon.dataset.app);
+    });
+    icon.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && apps[icon.dataset.app]) openApp(icon.dataset.app);
+    });
+}
+
+// clicking empty desktop clears the selection and closes the start menu
+desktopIconsEl.addEventListener("pointerdown", (event) => {
+    if (event.target === desktopIconsEl) {
+        selectDesktopIcon(null);
+        startMenu.classList.remove("visible");
+    }
+});
+
+// re-fit the grid when the browser window changes size
+window.addEventListener("resize", layoutDesktopIcons);
+layoutDesktopIcons();
